@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# Environment variables and secrets
+.env
+*.key
+*.pem
+secrets.yaml
+secrets.json
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Data and vector stores (large or generated files)
+data/course_configs/*.pdf
+data/course_configs/*.docx
+data/course_configs/*.pptx
+data/course_configs/large/
+
+# Logs
+*.log
+logs/
+
+# Coverage and test artifacts
+.coverage
+htmlcov/
+.pytest_cache/
