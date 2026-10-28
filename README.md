@@ -61,6 +61,59 @@ The tutor's response is printed directly in the terminal. To ask another
 question, run the command again with a different `--question` value. For
 example:
 
+### Direct test commands without a script
+
+If a launcher script does not work on your computer, activate the virtual
+environment and run the agent module directly:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+python -m src.m3_agent `
+  --course physics_101 `
+  --question "What is the difference between velocity and speed?"
+```
+
+The following questions are also useful examples:
+
+```powershell
+python -m src.m3_agent `
+  --course physics_101 `
+  --question "I am stuck on a projectile motion problem. What should I do next?"
+```
+
+```powershell
+python -m src.m3_agent `
+  --course chemistry_201 `
+  --question "Can you check if I set up this equilibrium expression correctly?"
+```
+
+```powershell
+python -m src.m3_agent `
+  --course biology_201 `
+  --question "Can you explain how the structure of the cell membrane relates to its function?"
+```
+
+```powershell
+python -m src.m3_agent `
+  --course chemistry_201 `
+  --question "I tried balancing this reaction but I am unsure what to check next."
+```
+
+If the virtual environment is not activated, use its Python executable
+directly instead:
+
+```powershell
+.\.venv\Scripts\python.exe -m src.m3_agent `
+  --course physics_101 `
+  --question "What is the difference between velocity and speed?"
+```
+
+The CourseGuide Tutor response should appear in the terminal after the
+question is processed. Available course policy files are `physics_101`,
+`chemistry_201`, and `biology_201`.
+
+### Run with a helper script
+
 ```powershell
 .\scripts\run_m3.ps1 `
   -Course chemistry_201 `
@@ -68,10 +121,9 @@ example:
 ```
 
 The PowerShell launcher uses the repository's virtual environment and prints
-the final CourseGuide Tutor response. Available course policy files are
-`physics_101`, `chemistry_201`, and `biology_201`. If PowerShell blocks local
-scripts, run the Python command above directly or allow scripts for the current
-session with `Set-ExecutionPolicy -Scope Process Bypass`.
+the final CourseGuide Tutor response. If PowerShell blocks local scripts, use
+the direct Python commands above or allow scripts for the current session with
+`Set-ExecutionPolicy -Scope Process Bypass`.
 
 On macOS or Linux, the equivalent command is:
 
