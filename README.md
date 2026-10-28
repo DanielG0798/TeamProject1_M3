@@ -82,6 +82,41 @@ On macOS or Linux, the equivalent command is:
 The policy MCP server reads course files from `config/`. Memory is stored in
 `data/agent_memory.json` and is limited to the most recent 100 notes.
 
+### Run with the helper scripts
+
+If you would rather not type the full command, the `scripts/` folder has
+shortcuts. Each one switches to the repository root and turns on `.venv` for
+you if it exists. You still need to complete the setup above first (virtual
+environment, `pip install`, and your `.env` file).
+
+There are two versions of each script, so use the one that matches your
+terminal. The `.sh` files only work on macOS, Linux, or Git Bash. They do
+nothing useful in Windows PowerShell or Command Prompt, which can look like the
+command was skipped. On Windows, use the `.ps1` files.
+
+**Windows (PowerShell):**
+
+```powershell
+.\scripts\run_m3.ps1
+```
+
+If PowerShell says running scripts is disabled, allow it for this window only
+and run the script again:
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+```
+
+**macOS / Linux:**
+
+```bash
+chmod +x scripts/*.sh        # only needed once, if the scripts are not executable
+./scripts/run_m3.sh
+```
+
+Both versions ask the agent one example question: "I am stuck setting up
+Newton's second law." for `physics_101`.
+
 ## Evaluation
 
 Run the offline evaluation checks:
@@ -102,6 +137,36 @@ The runner labels automated keyword misses as `response_keyword`; human review
 should assign the root cause from the evaluation plan's categories. The
 `human_review` and `critic_score` columns remain blank until those reviews are
 performed. `.env` and `data/agent_memory.json` should not be committed.
+
+### Run the evaluation with the helper script
+
+`scripts/run_tests.ps1` (Windows) and `scripts/run_tests.sh` (macOS / Linux) do
+the same thing as the live command above. They run all ten cases against your
+configured model, print PASS or FAIL for each one, show the overall pass rate at
+the end, and write `evaluation_results.csv`.
+
+```powershell
+.\scripts\run_tests.ps1
+```
+
+```bash
+./scripts/run_tests.sh
+```
+
+Anything you add after the script name is passed along to the evaluation, so you
+can pick a different model or save the results somewhere else:
+
+```powershell
+.\scripts\run_tests.ps1 --model your-model-name --output results\run1.csv
+```
+
+```bash
+./scripts/run_tests.sh --model your-model-name --output results/run1.csv
+```
+
+Because this sends real requests to the model, it needs your `.env` credentials
+and may take a few minutes. To run only the quick offline checks instead (no
+model calls), use `python -m pytest tests/test_m3_evaluation.py -q` (shown above).
 
 ## M3 submission status
 
