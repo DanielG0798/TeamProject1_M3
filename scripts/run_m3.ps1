@@ -1,7 +1,7 @@
 param(
     [string]$Course = "physics_101",
-    [Parameter(Mandatory = $true)]
     [string]$Question,
+    [switch]$Interactive,
     [string]$Model
 )
 
@@ -14,7 +14,12 @@ if (-not (Test-Path $python)) {
     exit 1
 }
 
-$arguments = @("-m", "src.m3_agent", "--course", $Course, "--question", $Question)
+$arguments = @("-m", "src.m3_agent", "--course", $Course)
+if ($Interactive -or -not $Question) {
+    $arguments += "--interactive"
+} else {
+    $arguments += @("--question", $Question)
+}
 if ($Model) {
     $arguments += @("--model", $Model)
 }
