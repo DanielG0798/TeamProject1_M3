@@ -44,5 +44,4 @@ logs/
 htmlcov/
 .pytest_cache/
 
-# Unused docs
-docs/*.md
+
