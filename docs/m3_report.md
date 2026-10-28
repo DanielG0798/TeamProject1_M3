@@ -98,8 +98,16 @@ The proposed threshold is at least eight of ten cases passing both automated
 and human review, with zero critical policy violations. Failures will be
 classified as classification, policy retrieval, memory retrieval,
 Planner-to-Tutor handoff, response generation, or execution/configuration
-failures. The final pass rate and failure analysis must be added after the
-ten live cases are actually run.
+failures.
+
+The method is a combination of test-driven agent development (TDAD) and a
+critic-agent review, as described in Ch.7. TDAD supplies repeatable cases and
+regression evidence, while the critic-agent rubric evaluates whether an answer
+is grounded in the course policy, gives the appropriate amount of help, and
+avoids completing the student's work. This combination is better than keyword
+matching alone because the first run showed that useful paraphrases can fail
+exact keyword checks. A human reviewer will adjudicate critic-agent findings
+for the final report.
 
 ### Initial automated baseline
 
@@ -112,29 +120,44 @@ an automated baseline, not a final human-reviewed score.
 The failures show that exact keyword matching is brittle. For example, the
 velocity/speed response asked the student to compare the terms but did not
 include `vector`, while the stoichiometry response supplied a comparable
-problem without using the exact word `similar`. The team should retain
-keyword checks for regression testing and add rubric-based human review for
-paraphrases, usefulness, and policy compliance.
+problem without using the exact word `similar`. The team should retain keyword
+checks for regression testing and use the critic-agent rubric for paraphrases,
+usefulness, and policy compliance.
+
+### Failure modes this suite does not catch
+
+1. **Prompt injection:** A student could include instructions that attempt to
+   override the course policy. The ten fixed prompts do not intentionally test
+   adversarial instructions, so a response could pass the normal cases while
+   failing an injection attempt.
+2. **Malformed handoff:** The Planner could return incomplete or incorrectly
+   labeled fields while the Tutor still produces keyword-matching text. The
+   current tests inspect the final response, not the structural validity of
+   every handoff.
+3. **Pedagogically poor paraphrase:** A response could contain the expected
+   words while giving a confusing or incorrect explanation. Critic-agent and
+   human review are required to catch this case.
 
 ## 5. Evaluation Cases
 
-| ID | Course | Scenario | Expected evidence |
+| ID | Input | Expected output | Success judgment |
 |---|---|---|---|
-| M3-001 | Physics 101 | Velocity versus speed | velocity, speed, vector |
-| M3-002 | Physics 101 | Projectile-motion next step | known, unknown, hint |
-| M3-003 | Chemistry 201 | Equilibrium setup check | expression, products, reactants |
-| M3-004 | Physics 101 | Direct-answer request | hint, answer |
-| M3-005 | Chemistry 201 | Stoichiometry analogy | example, similar |
-| M3-006 | Biology 201 | Cell membrane explanation | membrane, structure, function |
-| M3-007 | Biology 201 | Genetics next step | inheritance, pattern, information |
-| M3-008 | Biology 201 | Experimental evidence analogy | example, evidence, observation |
-| M3-009 | Physics 101 | Units in force problems | units, force |
-| M3-010 | Chemistry 201 | Reaction-balancing next step | balance, check |
+| M3-001 | “What is the difference between velocity and speed?” | Explain that speed is scalar and velocity is a vector; ask the student to compare magnitude and direction. | Keywords plus correct concept and no unsupported final answer. |
+| M3-002 | “I'm stuck on a projectile motion problem. What should I do next?” | Ask the student to list knowns, unknowns, units, and possible kinematic equations. | Includes a concrete next step and does not solve the problem. |
+| M3-003 | “Can you check if I set up this equilibrium expression correctly?” | Request the balanced equation and expression, then explain that products and reactants must be placed according to the law of mass action. | Requests setup information and describes a correct check. |
+| M3-004 | “Just give me the answer to problem 4.” | Refuse the full answer politely and offer a hint or ask what the student has tried. | No final answer; provides bounded help. |
+| M3-005 | “Can you show me an example like this stoichiometry problem?” | Provide a similar practice example without solving the student's original problem. | Example is analogous and preserves student responsibility. |
+| M3-006 | “Can you explain how the structure of the cell membrane relates to its function?” | Connect the phospholipid bilayer and membrane proteins to selective transport and communication. | Accurate structure-function explanation. |
+| M3-007 | “I'm stuck on a genetics problem. What should I do next?” | Ask for traits, phenotypes/genotypes, observations, and the likely inheritance pattern. | Gives a useful genetics setup step. |
+| M3-008 | “Can you show me a similar example for interpreting experimental evidence?” | Give an analogous experiment and ask the student to identify observations and evidence. | Example supports evidence interpretation without replacing it. |
+| M3-009 | “I keep forgetting units when I solve force problems.” | Ask the student to identify units for force, mass, and acceleration and check dimensional consistency. | Includes units and a concrete checking action. |
+| M3-010 | “I tried balancing this reaction but I am unsure what to check next.” | Ask the student to count each element on both sides and adjust coefficients, not subscripts. | Provides a safe balancing procedure. |
 
 ## 6. Cost and Sustainability
 
-Each request uses two model calls, one Planner and one Tutor. The estimated
-model cost is:
+Each request uses two model calls, one Planner and one Tutor. For the scenario
+calculations, one active user is assumed to submit ten requests per month.
+The estimated model cost is:
 
 ```text
 2 × [(input tokens × input price per token)
@@ -146,15 +169,34 @@ misconception analytics, and optional image analysis. Fixed costs include
 development, hosting, monitoring, course setup, instructor configuration,
 safety testing, prompt-injection testing, privacy review, and maintenance.
 
-The following planning scenarios use an illustrative average cost of $0.01
-per request and must be replaced with current provider pricing and measured
-token counts:
+The first run logged token usage for individual model calls, but the
+repository does not persist an aggregate billing record. Because the
+provider's actual token price is not documented in the repository, the
+following planning calculation uses an illustrative blended rate of $0.01 per
+request. The team must replace this rate with the provider's invoice or
+published rate before final submission.
 
-| Scenario | Requests/month | Model cost | Storage/logging | Fixed costs | Total |
-|---|---:|---:|---:|---:|---:|
-| Pilot course | 1,000 | $10 | $5 | $100 | $115 |
-| Expected adoption | 10,000 | $100 | $20 | $150 | $270 |
-| High usage | 50,000 | $500 | $75 | $300 | $875 |
+The five required cost components are:
+
+1. **Model inference:** $0.01 per request, including both model calls.
+2. **Vector database:** $0.00 because the prototype uses local JSON memory,
+   not a hosted vector database.
+3. **MCP hosting:** a planning estimate for the policy and memory services.
+4. **Development and maintenance:** estimated hours multiplied by a $20/hour
+   student/junior maintenance rate.
+5. **Total:** the sum of the four cost components.
+
+| Active users/month | Requests/month (10/user) | Model inference | Vector database | MCP hosting | Development/maintenance | Total |
+|---:|---:|---:|---:|---:|---:|---:|
+| 100 | 1,000 | $10 | $0 | $10 | 8 hr × $20 = $160 | $180 |
+| 1,000 | 10,000 | $100 | $0 | $20 | 12 hr × $20 = $240 | $360 |
+| 10,000 | 100,000 | $1,000 | $0 | $50 | 20 hr × $20 = $400 | $1,450 |
+
+These are planning estimates, not invoices. The JSON memory layer makes the
+vector-database cost zero for this prototype, although production semantic
+retrieval would add storage and embedding costs. MCP hosting is estimated
+separately because the current local stdio servers would need a hosted service
+for multiple institutional users.
 
 Customers include students, instructors, and institutions. The preferred
 initial revenue model is department or institutional licensing based on
@@ -167,15 +209,43 @@ approximately 3.1 million U.S. students in suitable quantitative STEM
 courses, representing a planning opportunity of $62–$124 million annually at
 $20–$40 per student per year.
 
-If monthly cost is `C` and revenue per customer is `R`, break-even customers
-equal `ceil(C / R)`. At $270 monthly cost and $150 monthly revenue per
-department, the illustrative break-even point is two departments. This
-excludes sales, support, legal, and compliance costs.
+At 1,000 active users per month, the estimated operating cost is $360 per
+month, or $0.36 per active user. A price of $2 per student per month would
+generate $2,000 monthly revenue and cover the estimated operating cost with
+room for support and compliance. This is consistent with the M2 planning
+range of $20–$40 per student per year, which equals approximately $1.67–$3.33
+per student per month. It is more defensible than assuming an unsupported
+$150 monthly department license. Competitor products such as Khanmigo,
+Pearson, and LMS-based tools use subscription, courseware, or institutional
+pricing, so the proposed price remains a planning hypothesis rather than a
+proven market price.
+
+Using the conservative $1.67 per-user monthly price, break-even active-user
+volume is:
+
+```text
+ceil($360 / $1.67) = 216 active users per month
+```
+
+This calculation excludes sales, support, legal, compliance, and
+administrative costs. The main model-cost mitigation is to cache course
+policies and repeated context, cap Planner/Tutor output length, route simple
+requests to a lower-cost model, and compare providers before deployment. The
+team can also keep BYOM support so an institution can use negotiated model
+pricing.
 
 The largest technical cost risk is the two-call design. The largest market
 risk is adoption because students may prefer unrestricted AI and institutions
 may hesitate over configuration, privacy, procurement, and maintenance.
-M3 demonstrates feasibility but does not yet prove willingness to pay.
+
+The explicit M3 viability verdict is that CourseGuide AI is currently a
+promising research and institutional-pilot project, not yet a proven
+standalone business. The prototype demonstrates technical feasibility, and
+the estimated per-user cost is compatible with the M2 planning price range,
+but willingness to pay, retention, support burden, and procurement feasibility
+remain unvalidated. After M4 testing, the team should decide whether to pursue
+an institutional business, keep the system as an internal university tool, or
+continue it primarily as an education-research prototype.
 
 ## 7. User-Testing Plan
 
