@@ -1,28 +1,13 @@
-param(
-    [string]$Course = "physics_101",
-    [string]$Question,
-    [switch]$Interactive,
-    [string]$Model
-)
+# Run the Milestone 3 agent with example inputs (Windows PowerShell).
+$ErrorActionPreference = "Stop"
 
-$root = Split-Path -Parent $PSScriptRoot
-Set-Location $root
+Set-Location (Join-Path $PSScriptRoot "..")
 
-$python = Join-Path $root ".venv\Scripts\python.exe"
-if (-not (Test-Path $python)) {
-    Write-Error "Virtual environment not found. Run: python -m venv .venv; .\.venv\Scripts\pip.exe install -r requirements.txt"
-    exit 1
+if (Test-Path ".venv\Scripts\Activate.ps1") {
+    . .\.venv\Scripts\Activate.ps1
 }
 
-$arguments = @("-m", "src.m3_agent", "--course", $Course)
-if ($Interactive -or -not $Question) {
-    $arguments += "--interactive"
-} else {
-    $arguments += @("--question", $Question)
-}
-if ($Model) {
-    $arguments += @("--model", $Model)
-}
-
-& $python @arguments
-exit $LASTEXITCODE
+python -m src.m3_agent `
+    --course physics_101 `
+    --question "I am stuck setting up Newton's second law."
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }

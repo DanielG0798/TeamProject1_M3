@@ -1,0 +1,20 @@
+﻿test_case_id,course_id,input,expected_keywords,expected_output,human_review,critic_score,actual_output,pass_fail,failure_category
+m3_001,physics_101,What is the difference between velocity and speed?,velocity; speed; vector,"Explain that speed is a scalar and velocity is a vector, then ask a brief check-for-understanding question.",,,"Hi! Before we dive in, could you tell me what you already know or have tried when it comes to defining **velocity** and **speed**?  
+- How would you describe each term in your own words?  
+- Do you notice any differences you think might be important (like direction or units)?  
+
+Feel free to share any notes or examples you’ve thought about—this will help us focus on the parts that are most helpful for you.",FAIL,response_keyword
+m3_002,physics_101,I'm stuck on a projectile motion problem. What should I do next?,known; unknown; hint,Ask the student to identify known and unknown quantities and provide a bounded next-step hint.,,,"I’m happy to help you move forward. To get us on the right track, could you let me know:
+
+1. **What have you tried so far** with this projectile‑motion problem?  
+2. **What quantities are given** (the knowns) and **what are you being asked to find** (the unknowns)?  
+3. **Which physics principle(s) do you think apply** here (for example, the kinematic equations, breaking the motion into horizontal and vertical components, etc.)?
+
+Once you’ve written those down, try to **list the relevant equations**, making sure to include units for each variable and to decide on a sign convention (e.g., upward + , downward – or the opposite). This will give us a clear setup to work from.",FAIL,response_keyword
+m3_003,chemistry_201,Can you check if I set up this equilibrium expression correctly?,expression; products; reactants,"Ask for the balanced equation and equilibrium expression, then guide the student to check products and reactants.",,,"Sure! To make sure everything is set up correctly, could you please share the full equilibrium expression you wrote? That includes:
+
+1. The balanced chemical equation for the reaction.  
+2. The equilibrium constant expression (K) you derived from that equation.  
+3. Any units you’ve attached to K, and the stoichiometric ratios you used.
+
+Once I see those details, I can help you verify whether the setup looks right.",FAIL,response_keyword
