@@ -114,54 +114,13 @@ async def ask(course_id: str, question: str, model: str | None = None) -> str:
         return result.final_output
 
 
-async def interactive_session(course_id: str, model: str | None = None) -> None:
-    """Keep accepting student questions until the user exits."""
-    examples = [
-        "What is the difference between velocity and speed?",
-        "I am stuck on a projectile motion problem. What should I do next?",
-        "Can you explain how the structure of the cell membrane relates to its function?",
-        "I tried balancing this reaction but I am unsure what to check next.",
-    ]
-    print("CourseGuide AI interactive mode")
-    print(f"Course: {course_id}")
-    print("Type a question and press Enter. Type 'quit' or 'exit' to stop.")
-    print("Example questions:")
-    for number, example in enumerate(examples, start=1):
-        print(f"  {number}. {example}")
-
-    while True:
-        try:
-            question = input("\nStudent question: ").strip()
-        except (EOFError, KeyboardInterrupt):
-            print("\nExiting CourseGuide AI.")
-            return
-        if question.lower() in {"quit", "exit"}:
-            print("Exiting CourseGuide AI.")
-            return
-        if not question:
-            print("Please enter a question.")
-            continue
-        print("\nCourseGuide Tutor:")
-        print(await ask(course_id, question, model))
-
-
 def main() -> None:
     parser = argparse.ArgumentParser(description="Run the M3 multi-agent CourseGuide")
     parser.add_argument("--course", default="physics_101", help="Course identifier")
-    parser.add_argument("--question", help="One student question")
-    parser.add_argument(
-        "--interactive",
-        action="store_true",
-        help="Accept multiple questions until the user types quit or exit",
-    )
+    parser.add_argument("--question", required=True, help="Student question")
     parser.add_argument("--model", default=None, help="Model name override")
     args = parser.parse_args()
-    if args.question and args.interactive:
-        parser.error("--question and --interactive cannot be used together")
-    if args.interactive or not args.question:
-        asyncio.run(interactive_session(args.course, args.model))
-    else:
-        print(asyncio.run(ask(args.course, args.question, args.model)))
+    print(asyncio.run(ask(args.course, args.question, args.model)))
 
 
 if __name__ == "__main__":

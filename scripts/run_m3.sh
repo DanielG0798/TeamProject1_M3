@@ -8,8 +8,4 @@ if [ -d ".venv" ]; then
     source .venv/bin/activate
 fi
 
-if [ "$#" -eq 0 ]; then
-    python -m src.m3_agent --interactive
-else
-    python -m src.m3_agent "$@"
-fi
+python -m src.m3_agent "$@"

@@ -57,30 +57,8 @@ Copy-Item .env.example .env
   --question "I am stuck setting up Newton's second law."
 ```
 
-The tutor's response is printed directly in the terminal. To ask several
-questions in one terminal session, use interactive mode:
-
-```powershell
-.\scripts\run_m3.ps1 -Interactive
-```
-
-The program displays example questions, waits for a question at the
-`Student question:` prompt, and prints the Tutor response. Enter `quit` or
-`exit` to end the session. You can also start interactive mode directly:
-
-```powershell
-.\.venv\Scripts\python.exe -m src.m3_agent `
-  --course physics_101 `
-  --interactive
-```
-
-The launcher without arguments behaves the same way:
-
-```bash
-./scripts/run_m3.sh
-```
-
-To run one question non-interactively, use a different `--question` value. For
+The tutor's response is printed directly in the terminal. To ask another
+question, run the command again with a different `--question` value. For
 example:
 
 ```powershell
