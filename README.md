@@ -34,23 +34,49 @@ These changes were made to satisfy the M3 requirements for two agents, an
 explicit handoff, sequential reasoning, a memory layer, and a ten-case
 evaluation plan.
 
-## Setup and run
+## Setup and run one question in the terminal
 
-Use Python 3.11 or newer, create a virtual environment, and install:
+Use Python 3.11 or newer. From the repository root, create a virtual
+environment and install the dependencies:
 
 ```powershell
 python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
 ```
 
-Copy `.env.example` to `.env`, then set the model base URL, API key, and model
-name for the provider used by your team. Never commit `.env` or expose its API
-key. From the repository root, run:
+Copy `.env.example` to `.env`, then open `.env` and set the model base URL, API
+key, and model name for the provider used by your team. Never commit `.env` or
+expose its API key. The program needs network access to the configured model.
+
+Run one question with PowerShell:
 
 ```powershell
 Copy-Item .env.example .env
-python -m src.m3_agent --course physics_101 --question "I am stuck setting up Newton's second law."
+.\.venv\Scripts\python.exe -m src.m3_agent `
+  --course physics_101 `
+  --question "I am stuck setting up Newton's second law."
+```
+
+The tutor's response is printed directly in the terminal. To ask another
+question, run the command again with a different `--question` value. For
+example:
+
+```powershell
+.\scripts\run_m3.ps1 `
+  -Course chemistry_201 `
+  -Question "Can you help me decide what to check next in my equilibrium expression?"
+```
+
+The PowerShell launcher uses the repository's virtual environment and prints
+the final CourseGuide Tutor response. Available course policy files are
+`physics_101`, `chemistry_201`, and `biology_201`. If PowerShell blocks local
+scripts, run the Python command above directly or allow scripts for the current
+session with `Set-ExecutionPolicy -Scope Process Bypass`.
+
+On macOS or Linux, the equivalent command is:
+
+```bash
+./scripts/run_m3.sh --course physics_101 --question "I am stuck setting up Newton's second law."
 ```
 
 The policy MCP server reads course files from `config/`. Memory is stored in
