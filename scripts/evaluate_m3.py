@@ -4,14 +4,16 @@ from __future__ import annotations
 import argparse
 import asyncio
 import csv
+import sys
 from pathlib import Path
 
 import yaml
 
-from src.m3_agent import ask
-
 ROOT = Path(__file__).resolve().parents[1]
 CASES_PATH = ROOT / "tests" / "m3_evaluation_cases.yaml"
+sys.path.insert(0, str(ROOT))
+
+from src.m3_agent import ask
 
 
 def load_cases() -> list[dict]:
