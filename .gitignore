@@ -29,6 +29,7 @@ secrets.json
 Thumbs.db
 
 # Data and vector stores (large or generated files)
+data/agent_memory.json
 data/course_configs/*.pdf
 data/course_configs/*.docx
 data/course_configs/*.pptx
