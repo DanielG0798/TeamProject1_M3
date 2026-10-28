@@ -21,8 +21,13 @@ The M3 implementation also includes:
 
 - Ten evaluation cases in `tests/m3_evaluation_cases.yaml`.
 - A live evaluation runner in `scripts/evaluate_m3.py` that writes
-  `evaluation_results.csv` with each input, expected keywords, actual output,
-  pass/fail status, and failure category.
+  `evaluation_results.csv` with each input, expected keywords, expected output,
+  human-review and critic-score fields, actual output, pass/fail status, and
+  failure category.
+- A committed baseline snapshot at
+  `docs/evaluation_results_baseline.csv`. The runner's root-level
+  `evaluation_results.csv` is a generated working file and should not be
+  committed.
 - Offline checks in `tests/test_m3_evaluation.py`.
 
 These changes were made to satisfy the M3 requirements for two agents, an
@@ -65,25 +70,25 @@ Run all ten live cases against the configured model:
 python scripts/evaluate_m3.py
 ```
 
-The live command creates `evaluation_results.csv`. This generated file,
-`.env`, and `data/agent_memory.json` should not be committed.
+The live command creates `evaluation_results.csv`. The committed baseline
+snapshot records one 4/10 automated run; live runs can vary with model output.
+The runner labels automated keyword misses as `response_keyword`; human review
+should assign the root cause from the evaluation plan's categories. The
+`human_review` and `critic_score` columns remain blank until those reviews are
+performed. `.env` and `data/agent_memory.json` should not be committed.
 
-## M3 submission checklist
+## M3 submission status
 
-The repository code covers the multi-agent system, memory layer, and
-evaluation runner. The team must also complete and submit:
+The repository contains the M3 implementation, evaluation plan, baseline
+results, and supporting tests. The architecture diagram, screen recording,
+cost and sustainability analysis, user-testing plan, and teammate contribution
+evidence are maintained as separate submission materials.
 
-- An updated architecture diagram showing both agents, the handoff, reasoning,
-  MCP tools, memory layer, model backend, and guardrails.
-- A two-minute screen recording of a real prompt, including one imperfect
-  moment and how the system handles it.
-- A 400–500 word evaluation plan describing the ten cases, evaluation method,
-  and success threshold.
-- A cost model with three usage scenarios, scaling assumptions, and a path to
-  sustainability.
-- A user-testing plan identifying testers, tasks, session questions, and
-  success criteria.
-- Commits from all three teammates showing cross-functional contributions.
+The baseline had substantive quality gaps in cases `m3_001` and `m3_006`:
+their outputs asked follow-up questions without explaining the requested
+concepts. Other automated failures may be keyword misses rather than incorrect
+guidance, so the baseline should not be treated as a final human-reviewed
+score.
 
 ## Known limitations
 

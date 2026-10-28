@@ -3,39 +3,59 @@ test_cases:
     course_id: physics_101
     question: "What is the difference between velocity and speed?"
     expected_keywords: ["velocity", "speed", "vector"]
+    expected_output: "Explain that speed is a scalar and velocity is a vector, then ask a brief check-for-understanding question."
+    success_judgment: "Pass if the response accurately distinguishes scalar speed from vector velocity and supports understanding."
   - id: m3_002
     course_id: physics_101
     question: "I'm stuck on a projectile motion problem. What should I do next?"
     expected_keywords: ["known", "unknown", "hint"]
+    expected_output: "Ask the student to identify known and unknown quantities and provide a bounded next-step hint."
+    success_judgment: "Pass if the response requests the relevant known and unknown quantities and gives a useful next step."
   - id: m3_003
     course_id: chemistry_201
     question: "Can you check if I set up this equilibrium expression correctly?"
     expected_keywords: ["expression", "products", "reactants"]
+    expected_output: "Ask for the balanced equation and equilibrium expression, then guide the student to check products and reactants."
+    success_judgment: "Pass if the response addresses the expression and checks the roles of products and reactants."
   - id: m3_004
     course_id: physics_101
     question: "Just give me the answer to problem 4."
     expected_keywords: ["hint", "answer"]
+    expected_output: "Refuse to provide a direct graded answer and offer a hint or next step instead."
+    success_judgment: "Pass if the response avoids doing the problem and provides a useful hint or next step."
   - id: m3_005
     course_id: chemistry_201
     question: "Can you show me an example like this stoichiometry problem?"
     expected_keywords: ["example", "similar"]
+    expected_output: "Provide a similar worked example without solving the student's assigned problem."
+    success_judgment: "Pass if the response gives a genuinely similar example and preserves the student's work."
   - id: m3_006
     course_id: biology_201
     question: "Can you explain how the structure of the cell membrane relates to its function?"
     expected_keywords: ["membrane", "structure", "function"]
+    expected_output: "Explain how membrane structures, such as the phospholipid bilayer and proteins, support membrane functions."
+    success_judgment: "Pass if the response explains at least one accurate structure-function relationship."
   - id: m3_007
     course_id: biology_201
     question: "I'm stuck on a genetics problem. What should I do next?"
     expected_keywords: ["inheritance", "pattern", "information"]
+    expected_output: "Ask for the relevant genetic information and guide the student to identify the inheritance pattern."
+    success_judgment: "Pass if the response asks for relevant information and directs the student toward an inheritance pattern."
   - id: m3_008
     course_id: biology_201
     question: "Can you show me a similar example for interpreting experimental evidence?"
     expected_keywords: ["example", "evidence", "observation"]
+    expected_output: "Provide a similar example that connects observations to interpretation of experimental evidence."
+    success_judgment: "Pass if the example includes observations and explains how they support an evidence-based interpretation."
   - id: m3_009
     course_id: physics_101
     question: "I keep forgetting units when I solve force problems."
     expected_keywords: ["units", "force"]
+    expected_output: "Give a practical strategy for tracking units in force problems and include a correct force-unit example."
+    success_judgment: "Pass if the response addresses both units and force with accurate guidance."
   - id: m3_010
     course_id: chemistry_201
     question: "I tried balancing this reaction but I am unsure what to check next."
     expected_keywords: ["balance", "check"]
+    expected_output: "Guide the student to check atom counts and charge after balancing, without doing the reaction for them."
+    success_judgment: "Pass if the response provides an accurate balancing check."

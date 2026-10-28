@@ -29,7 +29,7 @@ async def evaluate(output_path: Path, model: str | None = None) -> tuple[int, in
     output_path.parent.mkdir(parents=True, exist_ok=True)
     passed = 0
     cases = load_cases()
-    with output_path.open("w", newline="", encoding="utf-8") as handle:
+    with output_path.open("w", newline="", encoding="utf-8-sig") as handle:
         writer = csv.DictWriter(
             handle,
             fieldnames=[
@@ -37,6 +37,9 @@ async def evaluate(output_path: Path, model: str | None = None) -> tuple[int, in
                 "course_id",
                 "input",
                 "expected_keywords",
+                "expected_output",
+                "human_review",
+                "critic_score",
                 "actual_output",
                 "pass_fail",
                 "failure_category",
@@ -65,6 +68,9 @@ async def evaluate(output_path: Path, model: str | None = None) -> tuple[int, in
                     "course_id": case["course_id"],
                     "input": case["question"],
                     "expected_keywords": "; ".join(case["expected_keywords"]),
+                    "expected_output": case["expected_output"],
+                    "human_review": "",
+                    "critic_score": "",
                     "actual_output": response,
                     "pass_fail": status,
                     "failure_category": failure_category,
