@@ -1,6 +1,11 @@
 # InstructAI: CourseGuide AI
 ## M3 Multi-Agent System, Cost Analysis, and Evaluation Plan
 
+**Team:** InstructAI  
+**Members:** Andriana Slisko, `[Teammate 2]`, `[Teammate 3]`  
+**Course:** CEN 4930 — AI Agent Studio  
+**Date:** October 28, 2026  
+
 ## Executive Summary
 
 CourseGuide AI is an instructor-configurable learning agent designed to help
@@ -69,6 +74,17 @@ useful durable note. The handoff occurs only after the Planner completes,
 making sequential reasoning explicit. The architecture diagram and screen
 recording are separate M3 deliverables.
 
+## Guardrails
+
+The system retrieves the course policy before the Tutor generates a final
+answer. The Tutor is instructed to provide the smallest useful next step
+rather than a prohibited full solution or final numerical answer. Memory is
+limited to short course-specific notes and the latest 100 entries, and local
+credentials and generated memory are excluded from Git. The handoff trigger
+is the Planner returning all five fields—`REQUEST_TYPE`,
+`POLICY_CONSTRAINTS`, `STUDENT_CONTEXT`, `NEXT_STEP`, and
+`MEMORY_TO_SAVE`; only then does the Tutor run.
+
 ## 3. Reasoning and Memory
 
 M3 uses sequential reasoning: classify the request, retrieve policy, recall
@@ -134,10 +150,6 @@ usefulness, and policy compliance.
    labeled fields while the Tutor still produces keyword-matching text. The
    current tests inspect the final response, not the structural validity of
    every handoff.
-3. **Pedagogically poor paraphrase:** A response could contain the expected
-   words while giving a confusing or incorrect explanation. Critic-agent and
-   human review are required to catch this case.
-
 ## 5. Evaluation Cases
 
 | ID | Input | Expected output | Success judgment |
@@ -173,17 +185,20 @@ The first run logged token usage for individual model calls, but the
 repository does not persist an aggregate billing record. Because the
 provider's actual token price is not documented in the repository, the
 following planning calculation uses an illustrative blended rate of $0.01 per
-request. The team must replace this rate with the provider's invoice or
-published rate before final submission.
+request. This rate is a stated planning assumption because the provider
+pricing and a durable aggregate token report are not available in the
+repository.
 
 The five required cost components are:
 
 1. **Model inference:** $0.01 per request, including both model calls.
 2. **Vector database:** $0.00 because the prototype uses local JSON memory,
    not a hosted vector database.
-3. **MCP hosting:** a planning estimate for the policy and memory services.
+3. **MCP hosting:** $10–$50 per month for a small cloud VM or equivalent
+   service running the policy and memory services.
 4. **Development and maintenance:** estimated hours multiplied by a $20/hour
-   student/junior maintenance rate.
+   student/junior maintenance rate for bug fixes, policy updates, and prompt
+   tuning.
 5. **Total:** the sum of the four cost components.
 
 | Active users/month | Requests/month (10/user) | Model inference | Vector database | MCP hosting | Development/maintenance | Total |
@@ -214,17 +229,18 @@ month, or $0.36 per active user. A price of $2 per student per month would
 generate $2,000 monthly revenue and cover the estimated operating cost with
 room for support and compliance. This is consistent with the M2 planning
 range of $20–$40 per student per year, which equals approximately $1.67–$3.33
-per student per month. It is more defensible than assuming an unsupported
-$150 monthly department license. Competitor products such as Khanmigo,
-Pearson, and LMS-based tools use subscription, courseware, or institutional
-pricing, so the proposed price remains a planning hypothesis rather than a
-proven market price.
+per student per month. Competitor products such as Khanmigo, Pearson, and
+LMS-based tools use subscription, courseware, or institutional pricing, so
+the proposed price remains a planning hypothesis rather than a proven market
+price.
 
-Using the conservative $1.67 per-user monthly price, break-even active-user
-volume is:
+Costs scale with user volume, so break-even must use the cost tier closest to
+the volume being tested. In the 100-user tier, the variable model cost is
+$0.10 per user and the planning fixed costs are $170 ($10 hosting plus $160
+maintenance). At the conservative $1.67 per-user monthly price:
 
 ```text
-ceil($360 / $1.67) = 216 active users per month
+ceil($170 / ($1.67 - $0.10)) = 109 active users per month
 ```
 
 This calculation excludes sales, support, legal, compliance, and
@@ -282,13 +298,12 @@ evaluation can overstate quality, so human review is required. Production
 deployment would also require data-retention controls, consent, deletion
 procedures, access controls, privacy review, and institutional approval.
 
-## 9. M3 Completion Checklist
+## 9. M3 Status
 
-- [ ] Architecture diagram added.
-- [ ] Two-minute narrated recording completed.
-- [ ] Ten live cases run and CSV attached.
-- [ ] Actual pass rate and failed-case analysis added.
-- [ ] Current provider pricing verified.
-- [ ] User-testing sessions completed and summarized.
-- [ ] Cross-functional commits from all three teammates.
-- [ ] `.env` and generated memory files excluded from Git.
+The repository contains the ten-case automated baseline, full written report,
+cost assumptions, and user-testing plan. The architecture diagram and
+two-minute narrated recording are intentionally being completed separately by
+the teammate responsible for those deliverables. Human review of the
+automated results and the five user-testing sessions remain evidence to be
+added after those activities occur. The `.env` file and generated memory data
+remain excluded from Git.
