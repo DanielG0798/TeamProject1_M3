@@ -1,10 +1,10 @@
-# InstructAI: CourseGuide AI
+﻿# InstructAI: CourseGuide AI
 ## M3 Multi-Agent System, Cost Analysis, and Evaluation Plan
 
-**Team:** InstructAI  
-**Members:** Andriana Slisko, `[Teammate 2]`, `[Teammate 3]`  
-**Course:** CEN 4930 — AI Agent Studio  
-**Date:** October 28, 2026  
+**Team:** InstructAI
+**Members:** Andriana Slisko, `[Teammate 2]`, `[Teammate 3]`
+**Course:** CEN 4930 â€” AI Agent Studio
+**Date:** October 28, 2026
 
 ## Executive Summary
 
@@ -81,7 +81,7 @@ answer. The Tutor is instructed to provide the smallest useful next step
 rather than a prohibited full solution or final numerical answer. Memory is
 limited to short course-specific notes and the latest 100 entries, and local
 credentials and generated memory are excluded from Git. The handoff trigger
-is the Planner returning all five fields—`REQUEST_TYPE`,
+is the Planner returning all five fieldsâ€”`REQUEST_TYPE`,
 `POLICY_CONSTRAINTS`, `STUDENT_CONTEXT`, `NEXT_STEP`, and
 `MEMORY_TO_SAVE`; only then does the Tutor run.
 
@@ -154,16 +154,16 @@ usefulness, and policy compliance.
 
 | ID | Input | Expected output | Success judgment |
 |---|---|---|---|
-| M3-001 | “What is the difference between velocity and speed?” | Explain that speed is scalar and velocity is a vector; ask the student to compare magnitude and direction. | Keywords plus correct concept and no unsupported final answer. |
-| M3-002 | “I'm stuck on a projectile motion problem. What should I do next?” | Ask the student to list knowns, unknowns, units, and possible kinematic equations. | Includes a concrete next step and does not solve the problem. |
-| M3-003 | “Can you check if I set up this equilibrium expression correctly?” | Request the balanced equation and expression, then explain that products and reactants must be placed according to the law of mass action. | Requests setup information and describes a correct check. |
-| M3-004 | “Just give me the answer to problem 4.” | Refuse the full answer politely and offer a hint or ask what the student has tried. | No final answer; provides bounded help. |
-| M3-005 | “Can you show me an example like this stoichiometry problem?” | Provide a similar practice example without solving the student's original problem. | Example is analogous and preserves student responsibility. |
-| M3-006 | “Can you explain how the structure of the cell membrane relates to its function?” | Connect the phospholipid bilayer and membrane proteins to selective transport and communication. | Accurate structure-function explanation. |
-| M3-007 | “I'm stuck on a genetics problem. What should I do next?” | Ask for traits, phenotypes/genotypes, observations, and the likely inheritance pattern. | Gives a useful genetics setup step. |
-| M3-008 | “Can you show me a similar example for interpreting experimental evidence?” | Give an analogous experiment and ask the student to identify observations and evidence. | Example supports evidence interpretation without replacing it. |
-| M3-009 | “I keep forgetting units when I solve force problems.” | Ask the student to identify units for force, mass, and acceleration and check dimensional consistency. | Includes units and a concrete checking action. |
-| M3-010 | “I tried balancing this reaction but I am unsure what to check next.” | Ask the student to count each element on both sides and adjust coefficients, not subscripts. | Provides a safe balancing procedure. |
+| M3-001 | â€œWhat is the difference between velocity and speed?â€ | Explain that speed is scalar and velocity is a vector; ask the student to compare magnitude and direction. | Keywords plus correct concept and no unsupported final answer. |
+| M3-002 | â€œI'm stuck on a projectile motion problem. What should I do next?â€ | Ask the student to list knowns, unknowns, units, and possible kinematic equations. | Includes a concrete next step and does not solve the problem. |
+| M3-003 | â€œCan you check if I set up this equilibrium expression correctly?â€ | Request the balanced equation and expression, then explain that products and reactants must be placed according to the law of mass action. | Requests setup information and describes a correct check. |
+| M3-004 | â€œJust give me the answer to problem 4.â€ | Refuse the full answer politely and offer a hint or ask what the student has tried. | No final answer; provides bounded help. |
+| M3-005 | â€œCan you show me an example like this stoichiometry problem?â€ | Provide a similar practice example without solving the student's original problem. | Example is analogous and preserves student responsibility. |
+| M3-006 | â€œCan you explain how the structure of the cell membrane relates to its function?â€ | Connect the phospholipid bilayer and membrane proteins to selective transport and communication. | Accurate structure-function explanation. |
+| M3-007 | â€œI'm stuck on a genetics problem. What should I do next?â€ | Ask for traits, phenotypes/genotypes, observations, and the likely inheritance pattern. | Gives a useful genetics setup step. |
+| M3-008 | â€œCan you show me a similar example for interpreting experimental evidence?â€ | Give an analogous experiment and ask the student to identify observations and evidence. | Example supports evidence interpretation without replacing it. |
+| M3-009 | â€œI keep forgetting units when I solve force problems.â€ | Ask the student to identify units for force, mass, and acceleration and check dimensional consistency. | Includes units and a concrete checking action. |
+| M3-010 | â€œI tried balancing this reaction but I am unsure what to check next.â€ | Ask the student to count each element on both sides and adjust coefficients, not subscripts. | Provides a safe balancing procedure. |
 
 ## 6. Cost and Sustainability
 
@@ -172,8 +172,8 @@ calculations, one active user is assumed to submit ten requests per month.
 The estimated model cost is:
 
 ```text
-2 × [(input tokens × input price per token)
-+ (output tokens × output price per token)]
+2 Ã— [(input tokens Ã— input price per token)
++ (output tokens Ã— output price per token)]
 ```
 
 Usage costs include model calls, retrieval storage, session logging,
@@ -194,7 +194,7 @@ The five required cost components are:
 1. **Model inference:** $0.01 per request, including both model calls.
 2. **Vector database:** $0.00 because the prototype uses local JSON memory,
    not a hosted vector database.
-3. **MCP hosting:** $10–$50 per month for a small cloud VM or equivalent
+3. **MCP hosting:** $10â€“$50 per month for a small cloud VM or equivalent
    service running the policy and memory services.
 4. **Development and maintenance:** estimated hours multiplied by a $20/hour
    student/junior maintenance rate for bug fixes, policy updates, and prompt
@@ -203,9 +203,9 @@ The five required cost components are:
 
 | Active users/month | Requests/month (10/user) | Model inference | Vector database | MCP hosting | Development/maintenance | Total |
 |---:|---:|---:|---:|---:|---:|---:|
-| 100 | 1,000 | $10 | $0 | $10 | 8 hr × $20 = $160 | $180 |
-| 1,000 | 10,000 | $100 | $0 | $20 | 12 hr × $20 = $240 | $360 |
-| 10,000 | 100,000 | $1,000 | $0 | $50 | 20 hr × $20 = $400 | $1,450 |
+| 100 | 1,000 | $10 | $0 | $10 | 8 hr Ã— $20 = $160 | $180 |
+| 1,000 | 10,000 | $100 | $0 | $20 | 12 hr Ã— $20 = $240 | $360 |
+| 10,000 | 100,000 | $1,000 | $0 | $50 | 20 hr Ã— $20 = $400 | $1,450 |
 
 These are planning estimates, not invoices. The JSON memory layer makes the
 vector-database cost zero for this prototype, although production semantic
@@ -221,14 +221,14 @@ analytics, multimodal add-ons, additional subjects, and grants.
 M2 research estimated the global AI-in-education market at $8.3 billion in
 2025, growing toward $57.2 billion by 2033. The narrower estimated market was
 approximately 3.1 million U.S. students in suitable quantitative STEM
-courses, representing a planning opportunity of $62–$124 million annually at
-$20–$40 per student per year.
+courses, representing a planning opportunity of $62â€“$124 million annually at
+$20â€“$40 per student per year.
 
 At 1,000 active users per month, the estimated operating cost is $360 per
 month, or $0.36 per active user. A price of $2 per student per month would
 generate $2,000 monthly revenue and cover the estimated operating cost with
 room for support and compliance. This is consistent with the M2 planning
-range of $20–$40 per student per year, which equals approximately $1.67–$3.33
+range of $20â€“$40 per student per year, which equals approximately $1.67â€“$3.33
 per student per month. Competitor products such as Khanmigo, Pearson, and
 LMS-based tools use subscription, courseware, or institutional pricing, so
 the proposed price remains a planning hypothesis rather than a proven market
