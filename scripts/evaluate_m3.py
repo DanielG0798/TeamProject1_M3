@@ -156,7 +156,12 @@ def main() -> None:
         if reconfigure:
             reconfigure(encoding="utf-8", errors="replace")
     parser = argparse.ArgumentParser(description="Run the M3 ten-case evaluation")
-    parser.add_argument("--output", type=Path, default=ROOT / "evaluation_results.csv")
+    parser.add_argument(
+        "--output",
+        type=Path,
+        default=ROOT / "docs" / "evaluation_results_m4.csv",
+        help="Results CSV to write (default: docs/evaluation_results_m4.csv)",
+    )
     parser.add_argument("--model", default=None, help="Model name override")
     args = parser.parse_args()
     passed, total = asyncio.run(evaluate(args.output, args.model))
