@@ -13,8 +13,6 @@ ROOT = Path(__file__).resolve().parents[1]
 CASES_PATH = ROOT / "tests" / "m3_evaluation_cases.yaml"
 sys.path.insert(0, str(ROOT))
 
-from src.m3_agent import ask
-
 
 def load_cases() -> list[dict]:
     with CASES_PATH.open("r", encoding="utf-8") as handle:
@@ -25,7 +23,33 @@ def load_cases() -> list[dict]:
     return cases
 
 
+def keyword_matched(keyword: str, text: str) -> bool:
+    """Return True if any "|"-separated alternative of keyword appears in text.
+
+    "similar|comparable" matches either word; a plain keyword matches itself.
+    Matching is a case-insensitive substring check.
+    """
+    lowered = text.lower()
+    return any(
+        alternative.strip().lower() in lowered
+        for alternative in keyword.split("|")
+        if alternative.strip()
+    )
+
+
+def missing_keywords(case: dict, text: str) -> list[str]:
+    """Return the expected keywords (as written) that text does not satisfy."""
+    return [
+        keyword
+        for keyword in case["expected_keywords"]
+        if not keyword_matched(keyword, text)
+    ]
+
+
 async def evaluate(output_path: Path, model: str | None = None) -> tuple[int, int]:
+    # Imported here so the keyword helpers and offline tests need no model SDK.
+    from src.m3_agent import ask
+
     output_path.parent.mkdir(parents=True, exist_ok=True)
     passed = 0
     cases = load_cases()
@@ -43,17 +67,14 @@ async def evaluate(output_path: Path, model: str | None = None) -> tuple[int, in
                 "actual_output",
                 "pass_fail",
                 "failure_category",
+                "missing_keywords",
             ],
         )
         writer.writeheader()
         for case in cases:
             try:
                 response = await ask(case["course_id"], case["question"], model)
-                missing = [
-                    keyword
-                    for keyword in case["expected_keywords"]
-                    if keyword.lower() not in response.lower()
-                ]
+                missing = missing_keywords(case, response)
                 status = "PASS" if not missing else "FAIL"
                 failure_category = "" if not missing else "response_keyword"
             except Exception as error:
@@ -74,6 +95,7 @@ async def evaluate(output_path: Path, model: str | None = None) -> tuple[int, in
                     "actual_output": response,
                     "pass_fail": status,
                     "failure_category": failure_category,
+                    "missing_keywords": "; ".join(missing),
                 }
             )
             if missing:
