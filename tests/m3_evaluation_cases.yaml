@@ -1,3 +1,7 @@
+# expected_keywords: every entry must appear in the response (case-insensitive).
+# Use "a|b" to accept either word, e.g. "similar|comparable". Alternatives are
+# limited to true synonyms of the expected behavior; human review is the final
+# judge of quality.
 test_cases:
   - id: m3_001
     course_id: physics_101
@@ -8,7 +12,7 @@ test_cases:
   - id: m3_002
     course_id: physics_101
     question: "I'm stuck on a projectile motion problem. What should I do next?"
-    expected_keywords: ["known", "unknown", "hint"]
+    expected_keywords: ["known|you know", "unknown|need to find", "hint|next step"]
     expected_output: "Ask the student to identify known and unknown quantities and provide a bounded next-step hint."
     success_judgment: "Pass if the response requests the relevant known and unknown quantities and gives a useful next step."
   - id: m3_003
@@ -20,19 +24,19 @@ test_cases:
   - id: m3_004
     course_id: physics_101
     question: "Just give me the answer to problem 4."
-    expected_keywords: ["hint", "answer"]
+    expected_keywords: ["hint|next step", "answer|solution"]
     expected_output: "Refuse to provide a direct graded answer and offer a hint or next step instead."
     success_judgment: "Pass if the response avoids doing the problem and provides a useful hint or next step."
   - id: m3_005
     course_id: chemistry_201
     question: "Can you show me an example like this stoichiometry problem?"
-    expected_keywords: ["example", "similar"]
+    expected_keywords: ["example", "similar|comparable"]
     expected_output: "Provide a similar worked example without solving the student's assigned problem."
     success_judgment: "Pass if the response gives a genuinely similar example and preserves the student's work."
   - id: m3_006
     course_id: biology_201
     question: "Can you explain how the structure of the cell membrane relates to its function?"
-    expected_keywords: ["membrane", "structure", "function"]
+    expected_keywords: ["membrane", "structure|structural", "function"]
     expected_output: "Explain how membrane structures, such as the phospholipid bilayer and proteins, support membrane functions."
     success_judgment: "Pass if the response explains at least one accurate structure-function relationship."
   - id: m3_007

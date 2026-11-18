@@ -35,6 +35,9 @@ data/course_configs/*.docx
 data/course_configs/*.pptx
 data/course_configs/large/
 
+# Scratch evaluation output from local runs (committed results live in docs/)
+/evaluation_results.csv
+
 # Logs
 *.log
 logs/
