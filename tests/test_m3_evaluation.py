@@ -1,7 +1,17 @@
 """Offline checks for the M3 evaluation plan."""
 from __future__ import annotations
 
-from scripts.evaluate_m3 import keyword_matched, load_cases, missing_keywords
+import csv
+from pathlib import Path
+
+from scripts.evaluate_m3 import (
+    keyword_matched,
+    load_cases,
+    missing_keywords,
+    normalize_text,
+)
+
+BASELINE_CSV = Path(__file__).resolve().parents[1] / "docs" / "evaluation_results_baseline.csv"
 
 
 def _case(case_id: str) -> dict:
@@ -75,3 +85,38 @@ def test_real_gaps_still_fail_under_alternatives():
     assert missing_keywords(
         _case("m3_004"), "What have you tried? I can suggest the next step."
     ) == ["answer|solution"]
+
+
+def test_normalize_text_repairs_misdecoded_utf8():
+    assert normalize_text("projectileâ€‘motion") == "projectile‑motion"
+    assert normalize_text("problemâ€¯4") == "problem 4"
+
+
+def test_normalize_text_leaves_correct_text_unchanged():
+    text = "You’ve tried CaCl₂ and grams ↔ moles; café is fine."
+    assert normalize_text(text) == text
+
+
+def test_normalize_text_leaves_unrepairable_runs_alone():
+    # A lead character without valid continuation characters is not mojibake.
+    assert normalize_text("â€x") == "â€x"
+    assert normalize_text("plain ascii") == "plain ascii"
+
+
+def test_normalize_text_repairs_mixed_text_from_the_saved_baseline():
+    with BASELINE_CSV.open(encoding="utf-8-sig", newline="") as handle:
+        rows = list(csv.DictReader(handle))
+    garbled = [row["actual_output"] for row in rows if "â€" in row["actual_output"]]
+    assert garbled, "baseline is expected to contain garbled characters"
+    for text in garbled:
+        repaired = normalize_text(text)
+        assert "â€" not in repaired
+        assert "Â" not in repaired
+    # Correct characters in the same responses survive the repair.
+    stoichiometry = next(row for row in rows if row["test_case_id"] == "m3_005")
+    assert "CaCl₂" in normalize_text(stoichiometry["actual_output"])
+
+
+def test_normalize_text_repairs_bytes_with_no_cp1252_character():
+    # E2 80 9D (right double quote): 0x9D is undefined in cp1252 and arrives as a control char.
+    assert normalize_text("said â€\u009d ok") == "said ” ok"

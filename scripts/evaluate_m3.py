@@ -4,6 +4,7 @@ from __future__ import annotations
 import argparse
 import asyncio
 import csv
+import re
 import sys
 from pathlib import Path
 
@@ -13,6 +14,21 @@ ROOT = Path(__file__).resolve().parents[1]
 CASES_PATH = ROOT / "tests" / "m3_evaluation_cases.yaml"
 sys.path.insert(0, str(ROOT))
 
+# UTF-8 text that was mis-decoded as cp1252 shows up as runs like "â€‘" (a UTF-8
+# lead byte followed by continuation bytes). Match each run by its lead byte's
+# length so only well-formed sequences are touched.
+# Bytes 0x81, 0x8D, 0x8F, 0x90 and 0x9D have no cp1252 character and arrive as raw
+# C1 control characters, so those are accepted as continuation characters too.
+_CONTINUATION = (
+    re.escape(bytes(range(0x80, 0xC0)).decode("cp1252", errors="ignore"))
+    + "\u0080-\u009f"
+)
+_MOJIBAKE = re.compile(
+    f"[Â-ß][{_CONTINUATION}]"
+    f"|[à-ï][{_CONTINUATION}]{{2}}"
+    f"|[ð-ô][{_CONTINUATION}]{{3}}"
+)
+
 
 def load_cases() -> list[dict]:
     with CASES_PATH.open("r", encoding="utf-8") as handle:
@@ -21,6 +37,32 @@ def load_cases() -> list[dict]:
     if len(cases) != 10:
         raise ValueError(f"M3 evaluation requires exactly 10 cases, found {len(cases)}")
     return cases
+
+
+def _run_to_bytes(run: str) -> bytes:
+    raw = bytearray()
+    for char in run:
+        try:
+            raw += char.encode("cp1252")
+        except UnicodeEncodeError:
+            raw.append(ord(char))  # undefined cp1252 byte kept as a C1 control
+    return bytes(raw)
+
+
+def _repair_run(match: re.Match[str]) -> str:
+    try:
+        return _run_to_bytes(match.group()).decode("utf-8")
+    except UnicodeError:
+        return match.group()
+
+
+def normalize_text(text: str) -> str:
+    """Repair UTF-8 characters that were mis-decoded as cp1252.
+
+    Each suspect run is converted back only if it decodes as valid UTF-8, so
+    correct text (curly quotes, subscripts, arrows) is left unchanged.
+    """
+    return _MOJIBAKE.sub(_repair_run, text)
 
 
 def keyword_matched(keyword: str, text: str) -> bool:
@@ -73,7 +115,9 @@ async def evaluate(output_path: Path, model: str | None = None) -> tuple[int, in
         writer.writeheader()
         for case in cases:
             try:
-                response = await ask(case["course_id"], case["question"], model)
+                response = normalize_text(
+                    await ask(case["course_id"], case["question"], model)
+                )
                 missing = missing_keywords(case, response)
                 status = "PASS" if not missing else "FAIL"
                 failure_category = "" if not missing else "response_keyword"
@@ -106,6 +150,11 @@ async def evaluate(output_path: Path, model: str | None = None) -> tuple[int, in
 
 
 def main() -> None:
+    # Windows consoles default to a legacy code page; keep printed output UTF-8.
+    for stream in (sys.stdout, sys.stderr):
+        reconfigure = getattr(stream, "reconfigure", None)
+        if reconfigure:
+            reconfigure(encoding="utf-8", errors="replace")
     parser = argparse.ArgumentParser(description="Run the M3 ten-case evaluation")
     parser.add_argument("--output", type=Path, default=ROOT / "evaluation_results.csv")
     parser.add_argument("--model", default=None, help="Model name override")
